@@ -13,25 +13,39 @@ use Symfony\Component\Dotenv\Dotenv;
 $dotenv = new Dotenv();
 $dotenv->loadEnv(__DIR__ . "/../.env");
 
-$validation = new Validation;
 $auth = new Auth();
 $supplier = new Supplier();
 
 $router = new Router();
 
 $router->get("/api/auth/login", [
-    $validation->validate($_GET, [
+    [new Validation($_GET, [
         "username" => "required",
         "password" => "required",
-    ]),
+    ]), "validate"],
     [$auth, "login"],
 ]);
 $router->post("/api/supplier", [
-    $validation->validate($_POST, [
+    "Middleware\Authentication::validate",
+    [new Validation($_POST, [
         "name" => "required",
-    ]),
+        "phone" => "numeric",
+    ]), "validate"],
     [new BodyGetter, "createPost"],
     [$supplier, "insert"],
+]);
+$router->post("/api/supplier/:id", [
+    "Middleware\Authentication::validate",
+    [new Validation($_POST, [
+        "name" => "required",
+        "phone" => "numeric",
+    ]), "validate"],
+    [new BodyGetter, "createPost"],
+    [$supplier, "update"],
+]);
+$router->post("/api/supplier/delete/:id", [
+    "Middleware\Authentication::validate",
+    [$supplier, "delete"],
 ]);
 
 $router->serve();
