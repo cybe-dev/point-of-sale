@@ -11,4 +11,10 @@
             <unique-column name="email"/>
         </unique>
     </table>
+    <table name="supplier">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="varchar" required="true"/>
+        <column name="address" type="varchar"/>
+        <column name="phone" type="varchar"/>
+    </table>
 </database>
